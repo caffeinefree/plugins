@@ -1,5 +1,4 @@
 //=============================================================================
-//
 // MIT License
 //
 // Copyright (c) 2017 caffeinefree
@@ -25,12 +24,16 @@
 //=============================================================================
 
 /*:
- * @plugindesc WRITE ME
+ * @plugindesc A Minimap Plugin for your games!
  * @author Caffeine-Free
  *
- * @param WRITE ME
- * @desc WRITE ME
- * @default WRITE ME
+ * @param BG Color
+ * @desc Color for the minimap background
+ * @default rgba(50, 50, 50, 0.5)
+ *
+ * @param FG Color
+ * @desc Color for the minimap foreground
+ * @default rgba(150, 150, 150, 0.5)
  *
  * @help
  * Usage:
@@ -44,7 +47,43 @@
  */
 
 (function() {
-
-
-
+	
+	var params = PluginManager.parameters("CF_Minimap");
+	
+	var _bgcolor = params['BG Color'];
+	var _fgcolor = params['FG Color'];
+	
+	//Create minimap sprite
+	Minimap_Sprite = function() {
+		this.initialize.apply(this, arguments);
+	}
+	
+	Minimap_Sprite.prototype = Object.create(Sprite_Base.prototype);
+	Minimap_Sprite.prototype.constructor = Minimap_Sprite
+	
+	Minimap_Sprite.prototype.initialize = function() {
+		Sprite_Base.prototype.initialize.call(this);
+		// push everything into a tile if collidable for minimal drawing
+		this.tile = [];
+		this.draw();
+	}
+	
+	Minimap_Sprite.prototype.getMapCollision = function() {
+		for(var i=0;i<$dataMap.width;i++) {
+			for(var i2=0;i2<$dataMap.height;i2++) {
+				//If tile is passable, push array entry to an object
+				if($gameMap.checkPassage(i, i2, 0x0F) == true)
+				{
+					this.tile.push({
+						x: i,
+						y: i2,
+					});
+				}
+			}
+		}
+	}
+	
+	Minimap_Sprite.prototype.draw = function() {
+		//Should we use fill rect, or is there an alternative?
+	}
 })();
