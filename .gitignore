@@ -1,2 +1,4 @@
-plugins/*.*
+*.js
+libs
+plugins/*.js
 !plugins/CF_*.js
