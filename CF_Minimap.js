@@ -106,7 +106,7 @@
      * @return  {Window_Minimap}  New instance of Window_Minimap
      */
     Window_Minimap.create = function(scene) {
-      scene._minimapWindow = new Window_Minimap(128, 128, RIGHT, BOTTOM, -48, -48);
+      scene._minimapWindow = new Window_Minimap(320, 240, RIGHT, BOTTOM, -48, -48);
       scene.addWindow(scene._minimapWindow);
       return scene._minimapWindow;
     };
@@ -124,6 +124,48 @@
      * @param {Number}  y_offset  Window Y screen offset
      */
     Window_Minimap.prototype.initialize = function(width, height, x_align, y_align, x_offset, y_offset) {
+      Window_Base.prototype.initialize.call(this, 0, 0, width, height);
+
+      this._minimapSprite = new Sprite_Minimap(48, 48);
+
+      this.recalculatePosition(x_align, y_align, x_offset, y_offset);
+      this.refresh();
+    };
+
+    /**
+     * Window_Minimap update
+     */
+    Window_Minimap.prototype.update = function() {
+      Window_Base.prototype.update.call(this);
+      this._minimapSprite.x += 2;
+      this._minimapSprite.y += 1;
+      // TODO : Add code that checks if contents needs redrawing
+      this.refresh();
+    };
+
+    /**
+     * Window_Minimap refresh
+     */
+    Window_Minimap.prototype.refresh = function() {
+      var dx = Math.floor(this._minimapSprite.x) % this._minimapSprite.width;
+      var dy = Math.floor(this._minimapSprite.y) % this._minimapSprite.height;
+      var xx = Math.ceil(this.contents.width / this._minimapSprite.width) + 1;
+      var hh = Math.ceil(this.contents.height / this._minimapSprite.height) + 1;
+
+      var sw = this._minimapSprite.width;
+      var sh = this._minimapSprite.width;
+      while (xx--) {
+        var yy = hh;
+        while (yy--) {
+          this.contents.blt(this._minimapSprite.bitmap, 0, 0, sw, sh, dx + (xx - 1) * sw, dy + (yy - 1) * sh);
+        }
+      }
+    };
+
+    /**
+     * Window_Minimap recalculatePosition
+     */
+    Window_Minimap.prototype.recalculatePosition = function(x_align, y_align, x_offset, y_offset) {
       if (x_align === undefined) x_align = LEFT;
       if (y_align === undefined) y_align = TOP;
       if (x_offset === undefined) x_offset = 0;
@@ -134,27 +176,25 @@
       if (x_align <= LEFT) {
         x = 0;
       } else if (x_align >= RIGHT) {
-        x = Graphics.width - width;
+        x = Graphics.width - this.width;
       } else {
         // x_align == MIDDLE
-        x = Graphics.width / 2 - width / 2;
+        x = Graphics.width / 2 - this.width / 2;
       }
       x += x_offset;
 
       if (y_align <= TOP) {
         y = 0;
       } else if (y_align >= BOTTOM) {
-        y = Graphics.height - height;
+        y = Graphics.height - this.height;
       } else {
         // y_align == MIDDLE
-        y = Graphics.height / 2 - height / 2;
+        y = Graphics.height / 2 - this.height / 2;
       }
-      y += y_offset; // Add y_offset
+      y += y_offset;
 
-      Window_Base.prototype.initialize.call(this, x, y, width, height);
-
-      this._minimapSprite = new Sprite_Minimap(width, height);
-      this.addChild(this._minimapSprite);
+      this.x = x;
+      this.y = y;
     };
 
     /**
@@ -197,8 +237,6 @@
      */
     Sprite_Minimap.prototype.createBitmap = function(width, height) {
       this.bitmap = new Bitmap(width, height);
-
-      this.bitmap.fontSize = 32; // !!! Used for example
     };
 
     /**
@@ -222,11 +260,9 @@
      * This is where the drawing happens
      */
     Sprite_Minimap.prototype.redraw = function() {
-      // !!! Example below:
-      var width = this.bitmap.width;
-      var height = this.bitmap.height;
       this.bitmap.clear();
-      this.bitmap.drawText('A', 0, 0, width, height, 'center');
+      this.bitmap.gradientFillRect(0, 0, this.bitmap.width, this.bitmap.height, 'red', 'blue', true);
+      this.bitmap.drawCircle(this.bitmap.width / 2, this.bitmap.height / 2, this.bitmap.width / 2, 'green');
     };
 
   })();
