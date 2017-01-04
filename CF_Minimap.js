@@ -106,7 +106,7 @@
      * @return  {Window_Minimap}  New instance of Window_Minimap
      */
     Window_Minimap.create = function(scene) {
-      scene._minimapWindow = new Window_Minimap(320, 240, RIGHT, BOTTOM, -48, -48);
+      scene._minimapWindow = new Window_Minimap(320, 240, RIGHT, BOTTOM, -32, -32);
       scene.addWindow(scene._minimapWindow);
       return scene._minimapWindow;
     };
