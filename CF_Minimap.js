@@ -65,16 +65,18 @@
     Game_Interpreter.prototype.pluginCommand = function(command, args) {
       Game_Interpreter_pluginCommand.call(this, command, args);
 
-      if (command === 'Minimap') {
-        switch (args[0]) {
-          case 'display':
-            if (args[1].toLowerCase() === 'true') {
-              // TODO : Get current scene, show minimap if not displayed
-            } else {
-              // TODO : Get current scene, hide minimap if displayed
-            }
-            break;
+      if (command !== 'Minimap') {
+        return;
+      }
+
+      switch (args[0]) {
+      case 'display':
+        if (args[1].toLowerCase() === 'true') {
+          // TODO : Get current scene, show minimap if not displayed
+        } else {
+          // TODO : Get current scene, hide minimap if displayed
         }
+        break;
       }
     };
 
@@ -150,6 +152,9 @@
       y += y_offset; // Add y_offset
 
       Window_Base.prototype.initialize.call(this, x, y, width, height);
+
+      this._minimapSprite = new Sprite_Minimap(width, height);
+      this.addChild(this._minimapSprite);
     };
 
     /**
@@ -167,6 +172,62 @@
    * Sprite_Minimap
    */
   (function() {
+
+    /**
+     * Sprite_Minimap constructor
+     */
+    Sprite_Minimap = function() {
+      this.initialize.apply(this, arguments);
+    }
+
+    Sprite_Minimap.prototype = Object.create(Sprite.prototype);
+    Sprite_Minimap.prototype.constructor = Sprite_Minimap
+
+    /**
+     * Sprite_Minimap initialize
+     */
+    Sprite_Minimap.prototype.initialize = function(width, height) {
+      Sprite.prototype.initialize.call(this);
+      this.createBitmap(width, height);
+      this.update();
+    };
+
+    /**
+     * Sprite_Minimap createBitmap
+     */
+    Sprite_Minimap.prototype.createBitmap = function(width, height) {
+      this.bitmap = new Bitmap(width, height);
+
+      this.bitmap.fontSize = 32; // !!! Used for example
+    };
+
+    /**
+     * Sprite_Minimap update
+     */
+    Sprite_Minimap.prototype.update = function() {
+      Sprite.prototype.update.call(this);
+      this.updateBitmap();
+    };
+
+    /**
+     * Sprite_Minimap updateBitmap
+     */
+    Sprite_Minimap.prototype.updateBitmap = function() {
+      // TODO : Add code that checks if bitmap needs redrawing
+      this.redraw();
+    };
+
+    /**
+     * Sprite_Minimap redraw
+     * This is where the drawing happens
+     */
+    Sprite_Minimap.prototype.redraw = function() {
+      // !!! Example below:
+      var width = this.bitmap.width;
+      var height = this.bitmap.height;
+      this.bitmap.clear();
+      this.bitmap.drawText('A', 0, 0, width, height, 'center');
+    };
 
   })();
 
