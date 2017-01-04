@@ -1,8 +1,3 @@
-*.js
-libs
-plugins/*.js
-!plugins/CF_*.js
-
 # Created by https://www.gitignore.io/api/macos,windows,linux
 
 ### macOS ###
