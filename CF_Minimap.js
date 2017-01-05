@@ -65,6 +65,7 @@
 		Sprite_Base.prototype.initialize.call(this);
 		// push everything into a tile if collidable for minimal drawing
 		this.tile = [];
+		this.getMapCollision();
 		this.draw();
 	}
 	
