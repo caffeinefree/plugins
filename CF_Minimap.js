@@ -126,7 +126,7 @@
     Window_Minimap.prototype.initialize = function(width, height, x_align, y_align, x_offset, y_offset) {
       Window_Base.prototype.initialize.call(this, 0, 0, width, height);
 
-      this._minimapSprite = new Sprite_Minimap(48, 48);
+      this._minimapSprite = new Sprite_Minimap(100, 100);
 
       this.recalculatePosition(x_align, y_align, x_offset, y_offset);
       this.refresh();
@@ -137,8 +137,8 @@
      */
     Window_Minimap.prototype.update = function() {
       Window_Base.prototype.update.call(this);
-      this._minimapSprite.x += 2;
-      this._minimapSprite.y += 1;
+      this._minimapSprite.x -= 2;
+      this._minimapSprite.y -= 1;
       // TODO : Add code that checks if contents needs redrawing
       this.refresh();
     };
@@ -147,8 +147,8 @@
      * Window_Minimap refresh
      */
     Window_Minimap.prototype.refresh = function() {
-      var dx = Math.floor(this._minimapSprite.x) % this._minimapSprite.width;
-      var dy = Math.floor(this._minimapSprite.y) % this._minimapSprite.height;
+      var dx = Math.floor(this._minimapSprite.x).mod(this._minimapSprite.width);
+      var dy = Math.floor(this._minimapSprite.y).mod(this._minimapSprite.height);
       var xx = Math.ceil(this.contents.width / this._minimapSprite.width) + 1;
       var hh = Math.ceil(this.contents.height / this._minimapSprite.height) + 1;
 
