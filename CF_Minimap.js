@@ -125,10 +125,12 @@
      */
     Window_Minimap.prototype.initialize = function(width, height, x_align, y_align, x_offset, y_offset) {
       Window_Base.prototype.initialize.call(this, 0, 0, width, height);
-	  
+
       this._minimapSprite = new Sprite_Minimap($dataMap._mapId, $dataMap.width, $dataMap.height);
 
       this.recalculatePosition(x_align, y_align, x_offset, y_offset);
+      this._zoomLevel = 10;
+      this._mapScale = Math.min(this.contents.width, this.contents.height) / this._zoomLevel;
       this.refresh();
     };
 
@@ -137,8 +139,8 @@
      */
     Window_Minimap.prototype.update = function() {
       Window_Base.prototype.update.call(this);
-      this._minimapSprite.x -= 2;
-      this._minimapSprite.y -= 1;
+      this._minimapSprite.x -= 2 / this._mapScale;
+      this._minimapSprite.y -= 1 / this._mapScale;
       // TODO : Add code that checks if contents needs redrawing
       this.refresh();
     };
@@ -147,19 +149,21 @@
      * Window_Minimap refresh
      */
     Window_Minimap.prototype.refresh = function() {
-      var dx = Math.floor(this._minimapSprite.x).mod(this._minimapSprite.width);
-      var dy = Math.floor(this._minimapSprite.y).mod(this._minimapSprite.height);
+      var dx = this._minimapSprite.x.mod(this._minimapSprite.width) * this._mapScale;
+      var dy = this._minimapSprite.y.mod(this._minimapSprite.height) * this._mapScale;
       var xx = Math.ceil(this.contents.width / this._minimapSprite.width) + 1;
       var hh = Math.ceil(this.contents.height / this._minimapSprite.height) + 1;
 
-      var sw = this._minimapSprite.width;
-      var sh = this._minimapSprite.width;
+      var sw = this._minimapSprite.width * this._mapScale;
+      var sh = this._minimapSprite.height * this._mapScale;
+      this.contents._context.imageSmoothingEnabled = false;
       while (xx--) {
         var yy = hh;
         while (yy--) {
-          this.contents.blt(this._minimapSprite.bitmap, 0, 0, sw, sh, dx + (xx - 1) * sw, dy + (yy - 1) * sh);
+          this.contents.blt(this._minimapSprite.bitmap, 0, 0, this._minimapSprite.width, this._minimapSprite.height, dx + (xx - 1) * sw, dy + (yy - 1) * sh, sw, sh);
         }
       }
+      this.contents._context.imageSmoothingEnabled = true;
     };
 
     /**
@@ -255,7 +259,7 @@
       // TODO : Add code that checks if bitmap needs redrawing
       this.redraw();
     };
-	
+
 	/**
      * Sprite_Minimap drawCollision
 	 * As requested, drawing collision for the redraw function.
@@ -268,7 +272,7 @@
 				// If map is passable
 				if($gameMap.checkPassage(i, i2, 0x0F) == true) {
 					// Replace color with the param, dunno how you're gonna set it up yet
-					this.bitmap.fillRect(i, i2, 1, 1, "rgba(255, 255, 255, 0.5");
+					this.bitmap.fillRect(i, i2, 1, 1, "white");
 				}
 			}
 		}
@@ -280,9 +284,8 @@
      */
     Sprite_Minimap.prototype.redraw = function() {
       this.bitmap.clear();
-      this.bitmap.gradientFillRect(0, 0, this.bitmap.width, this.bitmap.height, 'red', 'blue', true);
-	  this.drawCollision();
-      this.bitmap.drawCircle(this.bitmap.width / 2, this.bitmap.height / 2, this.bitmap.width / 2, 'green');
+      this.bitmap.fillRect(0, 0, this.bitmap.width, this.bitmap.height, 'black');
+	    this.drawCollision();
     };
 
   })();
